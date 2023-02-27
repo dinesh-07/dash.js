@@ -1,4 +1,4 @@
-var METRIC_INTERVAL = 300;
+var METRIC_INTERVAL = 8000;
 
 var App = function () {
     this.player = null;
@@ -11,7 +11,7 @@ var App = function () {
         chart: {}
     }
     this.chartTimeout = null;
-    this.chartReportingInterval = 300;
+    this.chartReportingInterval = 8000;
     this.chartNumberOfEntries = 30;
     this.chartData = {
         playbackTime: 0,
@@ -358,7 +358,6 @@ App.prototype._startIntervalHandler = function () {
     setInterval(function () {
         if (self.player && self.player.isReady()) {
             var dashMetrics = self.player.getDashMetrics();
-            var settings = self.player.getSettings();
 
             var currentLatency = parseFloat(self.player.getCurrentLiveLatency(), 10);
             self.domElements.metrics.latencyTag.innerHTML = currentLatency + ' secs';
@@ -368,6 +367,16 @@ App.prototype._startIntervalHandler = function () {
 
             var currentBuffer = dashMetrics.getCurrentBufferLevel('video');
             self.domElements.metrics.bufferTag.innerHTML = currentBuffer + ' secs';
+
+            console.log('Bitrate',+self.domElements.metrics.videoBitrate.innerHTML);
+            console.log('Current Buffer',self.domElements.metrics.bufferTag.innerHTML);
+            console.log('Measured throughput',self.player.getAverageThroughput('video'));
+           
+            
+            const httpObject = dashMetrics.getCurrentHttpRequest('video');
+            const segmentTime = Math.abs(httpObject._tfinish.getTime() - httpObject.tresponse.getTime());
+            console.log('Segment download time',segmentTime);
+            console.log('Segment size',dashMetrics.getCurrentHttpRequest('video')._responseHeaders.split('\r\n')[1])
 
             var d = new Date();
             var seconds = d.getSeconds();
