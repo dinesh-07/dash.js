@@ -355,7 +355,15 @@ App.prototype._adjustChartSettings = function () {
 
 App.prototype._startIntervalHandler = function () {
     var self = this;
-    setInterval(function () {
+    let count = 0;
+    let result = [];
+    result.push('Metric Values:' + '\r\n')
+    let bitRateArray = [];
+    let bufferArray = [];
+    let throughputeArray = [];
+    let downloadArray = [];
+    let segmentSizeArray = [];
+    var interval = setInterval(function () {
         if (self.player && self.player.isReady()) {
             var dashMetrics = self.player.getDashMetrics();
 
@@ -368,21 +376,63 @@ App.prototype._startIntervalHandler = function () {
             var currentBuffer = dashMetrics.getCurrentBufferLevel('video');
             self.domElements.metrics.bufferTag.innerHTML = currentBuffer + ' secs';
 
-            console.log('Bitrate',+self.domElements.metrics.videoBitrate.innerHTML);
-            console.log('Current Buffer',self.domElements.metrics.bufferTag.innerHTML);
-            console.log('Measured throughput',self.player.getAverageThroughput('video'));
-           
+            //Bit Rate
+            console.log('Bitrate:', +self.domElements.metrics.videoBitrate.innerHTML);
+            bitRateArray.push('Bitrate: ' + self.domElements.metrics.videoBitrate.innerHTML + '\r\n');
+
+            //Buffer
+            console.log('Current Buffer:',self.domElements.metrics.bufferTag.innerHTML);
+            bufferArray.push('Current Buffer: ' + self.domElements.metrics.bufferTag.innerHTML + '\r\n');
+
+            //Throughput
+            let throughput = self.player.getAverageThroughput('video');
+            console.log('Measured throughput:',throughput);
+            throughputeArray.push('Measured throughput: ' + throughput + '\r\n');
             
+            //Download Time
             const httpObject = dashMetrics.getCurrentHttpRequest('video');
             const segmentTime = Math.abs(httpObject._tfinish.getTime() - httpObject.tresponse.getTime());
-            console.log('Segment download time',segmentTime);
-            console.log('Segment size',dashMetrics.getCurrentHttpRequest('video')._responseHeaders.split('\r\n')[1])
+            console.log('Segment download time',segmentTime + 'ms');
+            downloadArray.push('Segment download time: ' + segmentTime + 'ms' + '\r\n');
+
+            //Segment Size
+            console.log('Segment size',httpObject._responseHeaders.split('\r\n')[1])
+            segmentSizeArray.push('Segment size: ' + httpObject._responseHeaders.split('\r\n')[1] + '\r\n');
 
             var d = new Date();
             var seconds = d.getSeconds();
             self.domElements.metrics.sec.innerHTML = (seconds < 10 ? '0' : '') + seconds;
             var minutes = d.getMinutes();
             self.domElements.metrics.min.innerHTML = (minutes < 10 ? '0' : '') + minutes + ':';
+            count++;
+            // 10 mintues = 600 seconds and interval called for every 8 seconds so 600/8 =75
+            if(count === 75){
+                result.push('.................................................' + '\r\n');
+                for(let i = 0; i < bitRateArray.length; i++){
+                    result.push(bitRateArray[i]);
+                }
+                result.push('.................................................' + '\r\n');
+                for(let i = 0; i < bufferArray.length; i++){
+                    result.push(bufferArray[i]);
+                }
+                result.push('.................................................' + '\r\n');
+                for(let i = 0; i < throughputeArray.length; i++){
+                    result.push(throughputeArray[i]);
+                }
+                result.push('.................................................' + '\r\n');
+                for(let i = 0; i < downloadArray.length; i++){
+                    result.push(downloadArray[i]);
+                }
+                result.push('.................................................' + '\r\n');
+                for(let i = 0; i < segmentSizeArray.length; i++){
+                    result.push(segmentSizeArray[i]);
+                }
+                result.push('.................................................' + '\r\n');
+
+                var blob = new Blob(result, {type: 'text/plain;charset=utf-8'});
+                saveAs(blob, 'metric output result.txt');
+                clearInterval(interval);
+            }
         }
 
     }, METRIC_INTERVAL);
