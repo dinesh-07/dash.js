@@ -172,9 +172,35 @@
         "section": "Live Low Latency",
         "samples": [
             {
-                "title": "Low latency testplayer",
+                "title": "Low latency testplayer with Dynamic Algo",
                 "description": "Example showing how to use dash.js to play low latency streams. All low latency related settings such as the different ABR algorithms(LoL+,L2A) are selectable.",
-                "href": "low-latency/testplayer/testplayer.html",
+                "href": "low-latency/testplayer/testplayer_dynamic.html",
+                "image": "lib/img/akamai-ll-4.jpg",
+                "labels": [
+                    "Live",
+                    "Low Latency",
+                    "Settings",
+                    "Video",
+                    "Audio"
+                ]
+            },
+            {
+                "title": "Low latency testplayer with Bola Algo",
+                "description": "Example showing how to use dash.js to play low latency streams. All low latency related settings such as the different ABR algorithms(LoL+,L2A) are selectable.",
+                "href": "low-latency/testplayer/testplayer_bola.html",
+                "image": "lib/img/akamai-ll-4.jpg",
+                "labels": [
+                    "Live",
+                    "Low Latency",
+                    "Settings",
+                    "Video",
+                    "Audio"
+                ]
+            },
+            {
+                "title": "Low latency testplayer with Throughput Algo",
+                "description": "Example showing how to use dash.js to play low latency streams. All low latency related settings such as the different ABR algorithms(LoL+,L2A) are selectable.",
+                "href": "low-latency/testplayer/testplayer_Throughput.html",
                 "image": "lib/img/akamai-ll-4.jpg",
                 "labels": [
                     "Live",
