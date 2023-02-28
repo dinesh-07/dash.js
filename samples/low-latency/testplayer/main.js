@@ -377,17 +377,18 @@ App.prototype._startIntervalHandler = function () {
             self.domElements.metrics.bufferTag.innerHTML = currentBuffer + ' secs';
 
             //Bit Rate
-            console.log('Bitrate:', +self.domElements.metrics.videoBitrate.innerHTML);
-            bitRateArray.push('Bitrate: ' + self.domElements.metrics.videoBitrate.innerHTML + '\r\n');
+            var bitRateInMbps=+self.domElements.metrics.videoBitrate.innerHTML/1000;
+            console.log('Bitrate:', bitRateInMbps+'Mbps');
+            bitRateArray.push('Bitrate: '+bitRateInMbps + 'Mbps\r\n');
 
             //Buffer
             console.log('Current Buffer:',self.domElements.metrics.bufferTag.innerHTML);
             bufferArray.push('Current Buffer: ' + self.domElements.metrics.bufferTag.innerHTML + '\r\n');
 
             //Throughput
-            let throughput = self.player.getAverageThroughput('video');
-            console.log('Measured throughput:',throughput);
-            throughputeArray.push('Measured throughput: ' + throughput + '\r\n');
+            let throughput = self.player.getAverageThroughput('video')/1000;
+            console.log('Measured throughput:',throughput+'Mbps');
+            throughputeArray.push('Measured throughput: ' + throughput + 'Mbps\r\n');
             
             //Download Time
             const httpObject = dashMetrics.getCurrentHttpRequest('video');
@@ -396,8 +397,8 @@ App.prototype._startIntervalHandler = function () {
             downloadArray.push('Segment download time: ' + segmentTime + 'ms' + '\r\n');
 
             //Segment Size
-            console.log('Segment size',httpObject._responseHeaders.split('\r\n')[1])
-            segmentSizeArray.push('Segment size: ' + httpObject._responseHeaders.split('\r\n')[1] + '\r\n');
+            console.log('Segment size',httpObject._responseHeaders.split('\r\n')[1].split(' ')[1]+'bytes')
+            segmentSizeArray.push('Segment size: ' + httpObject._responseHeaders.split('\r\n')[1].split(' ')[1] + 'bytes\r\n');
 
             var d = new Date();
             var seconds = d.getSeconds();
